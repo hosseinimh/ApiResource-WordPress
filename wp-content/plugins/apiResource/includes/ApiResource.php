@@ -92,7 +92,7 @@ class ApiResource
         $this->definePublicHooks();
         $this->createWidget();
         $this->createShortCode();
-        $this->createEntriesPage();
+        $this->setEntriesPage();
     }
 
     /**
@@ -312,40 +312,67 @@ class ApiResource
     }
 
     /**
-     * Create detailed page for entries fetched from REST API resource.
+     * Creates or updates detailed page for entries fetched from REST API resource.
      *
      * @since    1.0.0
      * @access   private
      */
-    private function createEntriesPage()
+    private function setEntriesPage()
     {
+        $title = 'Entries details';
+        $page = get_page_by_title($title, 'OBJECT', 'page');
 
-        $post = get_page_by_title('Page title', 'OBJECT', 'page');
+        if (empty($page)) {
+            $content = $this->createEntriesContent();
+            $postDetails = [
+                'post_title'    => $title,
+                'post_content'  => $content,
+                'post_status'   => 'publish',
+                'post_author'   => 1,
+                'post_type' => 'page'
+            ];
 
-        if (!empty($post)) {
-            // wp_delete_post($post->ID);
+            wp_insert_post($postDetails);
+        } else {
+            add_filter('the_content', function ($content) {
+                $title = 'Entries details';
+                $page = get_page_by_title($title);
+
+                if (is_page($page->ID)) {
+                    $content = $this->createEntriesContent();
+                }
+
+                return $content;
+            });
         }
+    }
 
+    /**
+     * Creates content with entries fetched from REST API resource.
+     *
+     * @since    1.0.0
+     * @access   private
+     */
+    private function createEntriesContent()
+    {
         $url = ApiResource::getRestApiUrl();
         $fetcher = new ApiResourceFetcher($url);
 
         $books = $fetcher->fetchBooks();
-        $result = '<ul>';
+        $content = '<ul>';
 
         if ($books && is_array($books) && count($books) > 0) {
             foreach ($books as $book) {
-                $result .= '<li>' . $book->name . '</li>';
+                $content .= '<li>' . $book->name . '<span style="margin-left:30px; color: #6d6d6d; font-size: 0.8em;">' . $book->categoryTite . '</span></li>';
+                $content .= '<img src="' . $book->image . '" style="width: 100px;" />';
+                $content .= '<blockquote class="wp-block-quote">' . $book->description . '</blockquote>';
+                $content .= '<p>' . $book->extraInfo . '</p>';
+                $content .= '<p style="font-size: 0.8em; margin-bottom: 50px;">' . $book->tagsText . '</p>';
             }
         }
 
-        $result .= '</ul>';
-        $post_details = [
-            'post_title'    => 'Page title',
-            'post_content'  => $result,
-            'post_status'   => 'publish',
-            'post_author'   => 1,
-            'post_type' => 'page'
-        ];
-        // wp_insert_post($post_details);
+        $content .= '</ul>';
+
+        return $content;
     }
 }
