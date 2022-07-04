@@ -40,8 +40,8 @@ class ApiResourceWidget extends WP_Widget
     {
         parent::__construct(
             'api_resource_widget', // Base ID
-            'API_Resource_Widget_name', // Name
-            array('description' => __('API Resource Widget', 'apiResource'),) // Args
+            'API Resource Widget', // Name
+            array('description' => __('Fecthed list of entries', 'apiResource'),) // Args
         );
 
         // $this->fetcher = $fetcher;
@@ -57,19 +57,16 @@ class ApiResourceWidget extends WP_Widget
      */
     public function widget($args, $instance)
     {
-        $url = 'http://127.0.0.1:8000/api';
-        $fetcher = new ApiResourceFetcher($url);
+        $fetcher = new ApiResourceFetcher($instance['url']);
         $books = $fetcher->fetchBooks();
         $count = $books ? count($books) : 0;
 
         extract($args);
-        $title = apply_filters('widget_title', $instance['title']);
+        $title = 'Number of entries:';
 
         echo $before_widget;
-        if (!empty($title)) {
-            echo $before_title . $title . $after_title;
-        }
-        echo __('Hello, World! ' . $count, 'apiResource');
+        echo $before_title . $title . $after_title;
+        echo __($count . ' books', 'apiResource');
         echo $after_widget;
     }
 
@@ -82,15 +79,15 @@ class ApiResourceWidget extends WP_Widget
      */
     public function form($instance)
     {
-        if (isset($instance['title'])) {
-            $title = $instance['title'];
+        if (isset($instance['url'])) {
+            $url = $instance['url'];
         } else {
-            $title = __('New title', 'text_domain');
+            $url = __('http://127.0.0.1:8000/api', 'apiResource');
         }
 ?>
         <p>
-            <label for="<?php echo $this->get_field_name('title'); ?>"><?php _e('Title:'); ?></label>
-            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+            <label for="<?php echo $this->get_field_name('url'); ?>"><?php _e('API url:'); ?></label>
+            <input class="widefat" id="<?php echo $this->get_field_id('url'); ?>" name="<?php echo $this->get_field_name('url'); ?>" type="text" value="<?php echo esc_attr($url); ?>" />
         </p>
 <?php
     }
@@ -108,7 +105,7 @@ class ApiResourceWidget extends WP_Widget
     public function update($new_instance, $old_instance)
     {
         $instance = array();
-        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        $instance['url'] = (!empty($new_instance['url'])) ? strip_tags($new_instance['url']) : '';
 
         return $instance;
     }

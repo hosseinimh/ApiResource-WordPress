@@ -45,7 +45,7 @@ class ApiResourceFetcher
      */
     public function fetchBooks()
     {
-        return json_decode($this->fetch($this->remoteUrl . '/books'));
+        return $this->fetch($this->remoteUrl . '/books');
     }
 
     /**
@@ -74,7 +74,11 @@ class ApiResourceFetcher
             $response = wp_remote_get($url, $args);
 
             if (is_array($response) && !is_wp_error($response)) {
-                return $response['body'];
+                $body = json_decode($response['body']);
+
+                if ($body && empty($body['_result'])) {
+                    return $body;
+                }
             }
         } catch (\Error) {
         }
