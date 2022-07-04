@@ -29,7 +29,6 @@
  */
 class ApiResource
 {
-
     /**
      * The loader that's responsible for maintaining and registering all hooks that power
      * the plugin.
@@ -179,7 +178,6 @@ class ApiResource
      */
     private function loadDependencies()
     {
-
         /**
          * The class responsible for orchestrating the actions and filters of the
          * core plugin.
@@ -227,7 +225,6 @@ class ApiResource
      */
     private function setLocale()
     {
-
         $pluginI18n = new ApiReourceI18n();
 
         $this->loader->addAction('plugins_loaded', $pluginI18n, 'loadPluginTextdomain');
@@ -242,7 +239,6 @@ class ApiResource
      */
     private function defineAdminHooks()
     {
-
         $pluginAdmin = new ApiResourceAdmin($this->getPluginName(), $this->getVersion());
 
         $this->loader->addAction('admin_enqueue_scripts', $pluginAdmin, 'enqueueStyles');
@@ -258,7 +254,6 @@ class ApiResource
      */
     private function definePublicHooks()
     {
-
         $pluginPublic = new ApiResourcePublic($this->getPluginName(), $this->getVersion());
 
         $this->loader->addAction('wp_enqueue_scripts', $pluginPublic, 'enqueueStyles');
@@ -273,7 +268,6 @@ class ApiResource
      */
     private function createWidget()
     {
-
         $this->widget = new ApiResourceWidget();
 
         // Register ApiResourceWidget widget
@@ -291,7 +285,6 @@ class ApiResource
      */
     private function createShortCode()
     {
-
         add_shortcode('api_resource_entries', function () {
             $url = ApiResource::getRestApiUrl();
             $fetcher = new ApiResourceFetcher($url);

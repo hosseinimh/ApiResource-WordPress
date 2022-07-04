@@ -23,16 +23,6 @@
  */
 class ApiResourceWidget extends WP_Widget
 {
-
-    /**
-     * The fetcher that's responsible for fetching data from REST API resource.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      ApiResourceFetcher    $fetcher    Maintains and registers all hooks for the plugin.
-     */
-    private $fetcher;
-
     /**
      * Register widget with WordPress.
      */

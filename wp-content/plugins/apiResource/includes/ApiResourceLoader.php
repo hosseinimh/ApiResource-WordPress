@@ -23,7 +23,6 @@
  */
 class ApiResourceLoader
 {
-
     /**
      * The array of actions registered with WordPress.
      *
@@ -49,7 +48,6 @@ class ApiResourceLoader
      */
     public function __construct()
     {
-
         $this->actions = [];
         $this->filters = [];
     }
@@ -100,7 +98,6 @@ class ApiResourceLoader
      */
     private function add($hooks, $hook, $component, $callback, $priority, $acceptedArgs)
     {
-
         $hooks[] = array(
             'hook'          => $hook,
             'component'     => $component,
@@ -119,7 +116,6 @@ class ApiResourceLoader
      */
     public function run()
     {
-
         foreach ($this->filters as $hook) {
             add_filter($hook['hook'], array($hook['component'], $hook['callback']), $hook['priority'], $hook['acceptedArgs']);
         }

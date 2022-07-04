@@ -33,7 +33,6 @@ class ApiReourceI18n
      */
     public function loadPluginTextdomain()
     {
-
         load_plugin_textdomain(
             'apiResource',
             false,
