@@ -41,24 +41,6 @@ class ApiResource
     protected $loader;
 
     /**
-     * The remote url of REST API resource.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string    $remoteUrl    The remote url of REST API resource.
-     */
-    private $remoteUrl;
-
-    /**
-     * The fetcher that's responsible for fetching data from REST API resource.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      ApiResourceFetcher    $fetcher    Maintains and registers all hooks for the plugin.
-     */
-    private $fetcher;
-
-    /**
      * The widget that's responsible for presenting data from REST API resource to the user.
      *
      * @since    1.0.0
@@ -102,15 +84,81 @@ class ApiResource
             $this->version = '1.0.0';
         }
 
-        $this->pluginName = 'apiResource';
-        $this->remoteUrl = 'http://127.0.0.1:8000/api';
+        $this->pluginName = 'ApiResource';
 
         $this->loadDependencies();
         $this->setLocale();
         $this->defineAdminHooks();
         $this->definePublicHooks();
-        $this->setFetcher();
         $this->createWidget();
+        $this->createShortCode();
+        $this->createEntriesPage();
+    }
+
+    /**
+     * Run the loader to execute all of the hooks with WordPress.
+     *
+     * @since    1.0.0
+     */
+    public function run()
+    {
+        $this->loader->run();
+    }
+
+    /**
+     * The name of the plugin used to uniquely identify it within the context of
+     * WordPress and to define internationalization functionality.
+     *
+     * @since     1.0.0
+     * @return    string    The name of the plugin.
+     */
+    public function getPluginName()
+    {
+        return $this->pluginName;
+    }
+
+    /**
+     * The reference to the class that orchestrates the hooks with the plugin.
+     *
+     * @since     1.0.0
+     * @return    ApiResourceLoader    Orchestrates the hooks of the plugin.
+     */
+    public function getLoader()
+    {
+        return $this->loader;
+    }
+
+    /**
+     * Retrieve the version number of the plugin.
+     *
+     * @since     1.0.0
+     * @return    string    The version number of the plugin.
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Gets the url of REST API resource.
+     *
+     * @since     1.0.0
+     * @return    string    The url of REST API resource.
+     */
+    public static function getRestApiUrl()
+    {
+        $url = 'http://127.0.0.1:8000/api';
+        $widget = get_option('widget_api_resource_widget');
+
+        if ($widget && is_array($widget)) {
+            foreach ($widget as $key => $value) {
+                if (is_array($value) && !empty($value['url'])) {
+                    $url = $value['url'];
+                }
+            }
+        }
+
+        return $url;
     }
 
     /**
@@ -218,18 +266,6 @@ class ApiResource
     }
 
     /**
-     * Set fetcher for REST API resource.
-     *
-     * @since    1.0.0
-     * @access   private
-     */
-    private function setFetcher()
-    {
-
-        $this->fetcher = new ApiResourceFetcher($this->remoteUrl);
-    }
-
-    /**
      * Create widget for REST API resource.
      *
      * @since    1.0.0
@@ -244,62 +280,72 @@ class ApiResource
         add_action('widgets_init', function () {
             register_widget('ApiResourceWidget');
         });
-        // $this->loader->addAction('widgets_init', $this, 'registerApiResourceWidget');
-        //add_action('widgets_init', 'registerApiResourceWidget');
     }
 
     /**
-     * Registers a widget for REST API resource.
+     * Create shortcode for REST API resource.
+     * [api_resource_entries]
      *
      * @since    1.0.0
      * @access   private
      */
-    public function registerApiResourceWidget()
+    private function createShortCode()
     {
-        register_widget($this->widget);
+
+        add_shortcode('api_resource_entries', function () {
+            $url = ApiResource::getRestApiUrl();
+            $fetcher = new ApiResourceFetcher($url);
+
+            $books = $fetcher->fetchBooks();
+            $result = '<ul>';
+
+            if ($books && is_array($books) && count($books) > 0) {
+                foreach ($books as $book) {
+                    $result .= '<li>' . $book->name . '</li>';
+                }
+            }
+
+            $result .= '</ul>';
+
+            return $result;
+        });
     }
 
     /**
-     * Run the loader to execute all of the hooks with WordPress.
+     * Create detailed page for entries fetched from REST API resource.
      *
      * @since    1.0.0
+     * @access   private
      */
-    public function run()
+    private function createEntriesPage()
     {
-        $this->loader->run();
-    }
 
-    /**
-     * The name of the plugin used to uniquely identify it within the context of
-     * WordPress and to define internationalization functionality.
-     *
-     * @since     1.0.0
-     * @return    string    The name of the plugin.
-     */
-    public function getPluginName()
-    {
-        return $this->pluginName;
-    }
+        $post = get_page_by_title('Page title', 'OBJECT', 'page');
 
-    /**
-     * The reference to the class that orchestrates the hooks with the plugin.
-     *
-     * @since     1.0.0
-     * @return    ApiResourceLoader    Orchestrates the hooks of the plugin.
-     */
-    public function getLoader()
-    {
-        return $this->loader;
-    }
+        if (!empty($post)) {
+            // wp_delete_post($post->ID);
+        }
 
-    /**
-     * Retrieve the version number of the plugin.
-     *
-     * @since     1.0.0
-     * @return    string    The version number of the plugin.
-     */
-    public function getVersion()
-    {
-        return $this->version;
+        $url = ApiResource::getRestApiUrl();
+        $fetcher = new ApiResourceFetcher($url);
+
+        $books = $fetcher->fetchBooks();
+        $result = '<ul>';
+
+        if ($books && is_array($books) && count($books) > 0) {
+            foreach ($books as $book) {
+                $result .= '<li>' . $book->name . '</li>';
+            }
+        }
+
+        $result .= '</ul>';
+        $post_details = [
+            'post_title'    => 'Page title',
+            'post_content'  => $result,
+            'post_status'   => 'publish',
+            'post_author'   => 1,
+            'post_type' => 'page'
+        ];
+        // wp_insert_post($post_details);
     }
 }

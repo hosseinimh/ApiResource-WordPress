@@ -43,8 +43,6 @@ class ApiResourceWidget extends WP_Widget
             'API Resource Widget', // Name
             array('description' => __('Fecthed list of entries', 'apiResource'),) // Args
         );
-
-        // $this->fetcher = $fetcher;
     }
 
     /**
@@ -82,7 +80,7 @@ class ApiResourceWidget extends WP_Widget
         if (isset($instance['url'])) {
             $url = $instance['url'];
         } else {
-            $url = __('http://127.0.0.1:8000/api', 'apiResource');
+            $url = __(ApiResource::getRestApiUrl(), 'apiResource');
         }
 ?>
         <p>
