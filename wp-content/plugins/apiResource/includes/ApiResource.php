@@ -40,15 +40,6 @@ class ApiResource
     protected $loader;
 
     /**
-     * The widget that's responsible for presenting data from REST API resource to the user.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      ApiResourceWidget    $widget    Presents data from REST API resource to the user.
-     */
-    private $widget;
-
-    /**
      * The unique identifier of this plugin.
      *
      * @since    1.0.0
@@ -139,7 +130,7 @@ class ApiResource
     }
 
     /**
-     * Gets the url of REST API resource.
+     * Returns the url of REST API resource.
      *
      * @since     1.0.0
      * @return    string    The url of REST API resource.
@@ -268,7 +259,7 @@ class ApiResource
      */
     private function createWidget()
     {
-        $this->widget = new ApiResourceWidget();
+        $widget = new ApiResourceWidget();
 
         // Register ApiResourceWidget widget
         add_action('widgets_init', function () {
@@ -314,12 +305,12 @@ class ApiResource
     {
         $title = 'Entries details';
         $page = get_page_by_title($title, 'OBJECT', 'page');
+        $entriesContent = $this->createEntriesContent();
 
         if (empty($page)) {
-            $content = $this->createEntriesContent();
             $postDetails = [
                 'post_title'    => $title,
-                'post_content'  => $content,
+                'post_content'  => $entriesContent,
                 'post_status'   => 'publish',
                 'post_author'   => 1,
                 'post_type' => 'page'
@@ -327,12 +318,9 @@ class ApiResource
 
             wp_insert_post($postDetails);
         } else {
-            add_filter('the_content', function ($content) {
-                $title = 'Entries details';
-                $page = get_page_by_title($title);
-
+            add_filter('the_content', function ($content) use ($page, $entriesContent) {
                 if (is_page($page->ID)) {
-                    $content = $this->createEntriesContent();
+                    $content = $entriesContent;
                 }
 
                 return $content;

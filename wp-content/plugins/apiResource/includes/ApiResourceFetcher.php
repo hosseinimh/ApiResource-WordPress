@@ -49,16 +49,6 @@ class ApiResourceFetcher
     }
 
     /**
-     * Fetch list of categories from REST API.
-     *
-     * @since    1.0.0
-     */
-    public function fetchCategories()
-    {
-        return $this->fetch($this->remoteUrl . '/categories');
-    }
-
-    /**
      * Fetch data from REST API.
      *
      * @since    1.0.0

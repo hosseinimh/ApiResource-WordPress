@@ -1,5 +1,5 @@
 
-# API Resource REST-API plugin, Widget, shortcode and entries details page in WordPress
+# API Resource REST-API WordPress plugin, widget, shortcode and 'Entries Details' page 
 
 A simple project fetches data from REST API resource and show with plugin.
 
@@ -42,3 +42,62 @@ Set `Api url` to REST API resource.
   http://127.0.0.1:8000/api
 ```
     
+## Key functions
+
+All key functions are in `includes` directory.
+
+### ApiResource.php
+
+The file that defines the core plugin class.
+
+- getRestApiUrl()
+
+    Returns the url of REST API resource.
+
+- loadDependencies()
+
+    Loads the required dependencies for this plugin.
+
+- createWidget()
+
+    Creates widget for REST API resource.
+
+- createShortCode()
+
+    Creates shortcode for REST API resource.
+
+- setEntriesPage()
+
+    Creates or updates detailed page for entries fetched from REST API resource.
+
+- createEntriesContent()
+
+    Creates content with entries fetched from REST API resource.
+
+### ApiResourceFetcher.php
+
+Fetch books and categories from REST API.
+
+- fetchBooks()
+
+    Fetches list of books from REST API.
+
+- fetch($url)
+
+    Fetches data from REST API.
+
+### ApiResourceWidget.php
+
+Register all actions and filters for the plugin.
+
+- widget($args, $instance)
+    
+    Front-end display of widget.
+
+- form($instance)
+
+    Back-end widget form.
+
+- update($newInstance, $oldInstance)
+
+    Sanitizes widget form values as they are saved.
