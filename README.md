@@ -1,5 +1,4 @@
-
-# API Resource REST-API WordPress plugin, widget, shortcode and 'Entries Details' page 
+# API Resource REST-API WordPress plugin, widget, shortcode and 'Entries Details' page
 
 A simple project fetches data from REST API resource and show with plugin.
 
@@ -23,14 +22,10 @@ shortcode name is `[api_resource_entries]`.
 It shows books names as unodered list (`ul`).
 
 ### Entries Details page
+
 The page title is `Entries details`.
 
 It shows full list of books including image, description, extra info, category title, tags.
-
-
-
-
-
 
 ## Installation
 
@@ -41,7 +36,7 @@ Set `Api url` to REST API resource.
 ```bash
   http://127.0.0.1:8000/api
 ```
-    
+
 ## Key functions
 
 All key functions are in `includes` directory.
@@ -52,27 +47,27 @@ The file that defines the core plugin class.
 
 - getRestApiUrl()
 
-    Returns the url of REST API resource.
+  Returns the url of REST API resource.
 
 - loadDependencies()
 
-    Loads the required dependencies for this plugin.
+  Loads the required dependencies for this plugin.
 
 - createWidget()
 
-    Creates widget for REST API resource.
+  Creates widget for REST API resource.
 
 - createShortCode()
 
-    Creates shortcode for REST API resource.
+  Creates shortcode for REST API resource.
 
 - setEntriesPage()
 
-    Creates or updates detailed page for entries fetched from REST API resource.
+  Creates or updates detailed page for entries fetched from REST API resource.
 
 - createEntriesContent()
 
-    Creates content with entries fetched from REST API resource.
+  Creates content with entries fetched from REST API resource.
 
 ### ApiResourceFetcher.php
 
@@ -80,24 +75,28 @@ Fetch books and categories from REST API.
 
 - fetchBooks()
 
-    Fetches list of books from REST API.
+  Fetches list of books from REST API.
 
 - fetch($url)
 
-    Fetches data from REST API.
+  Fetches data from REST API.
 
 ### ApiResourceWidget.php
 
 Register all actions and filters for the plugin.
 
 - widget($args, $instance)
-    
-    Front-end display of widget.
+
+  Front-end display of widget.
 
 - form($instance)
 
-    Back-end widget form.
+  Back-end widget form.
 
 - update($newInstance, $oldInstance)
 
-    Sanitizes widget form values as they are saved.
+  Sanitizes widget form values as they are saved.
+
+## Live demo
+
+- [http://wp-api-resource.hosseinimh.com](http://wp-api-resource.hosseinimh.com)
