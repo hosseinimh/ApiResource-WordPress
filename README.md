@@ -1,6 +1,6 @@
 # API Resource REST-API WordPress plugin, widget, shortcode and 'Entries Details' page
 
-A simple project fetches data from REST API resource and show with plugin.
+A simple project fetches data from REST API resource and shows with plugin.
 
 ## Plugin
 
@@ -19,7 +19,7 @@ The widget, then shows the number of books.
 
 shortcode name is `[api_resource_entries]`.
 
-It shows books names as unodered list (`ul`).
+It shows books names as Unodered List (`<ul></ul>`).
 
 ### Entries Details page
 
